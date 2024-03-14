@@ -3,7 +3,6 @@ const { Client, MessageMedia } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const axios = require("axios");
 require("dotenv").config();
-// text to api
 const { default: MonsterApiClient } = require("monsterapi");
 const clientImage = new MonsterApiClient(process.env.MONSTER_API);
 const model = "txt2img";
@@ -34,7 +33,7 @@ client.on("message", async (msg) => {
 
 client.on("message", async (msg) => {
   if (msg.body.startsWith(".bantu")) {
-    const textBantu = msg.body.substring(9);
+    const textBantu = msg.body.substring(100);
     msg.reply("⏳ Prosses AI");
     const API_KEY = process.env.GEMINI_API;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
@@ -54,7 +53,7 @@ client.on("message", async (msg) => {
 
 client.on("message", async (msg) => {
   if (msg.body.startsWith(".image")) {
-    const textImage = msg.body.substring(7);
+    const textImage = msg.body.substring(100);
     msg.reply("⏳ Proses AI");
     const input = {
       prompt: textImage,
@@ -69,15 +68,25 @@ client.on("message", async (msg) => {
     try {
       const response = await clientImage.generate(model, input);
       const urlImage = response.output[0];
-      const replyTemplate = `
-*LINK IMAGE HASIL GENERATE AI*
 
-${urlImage}
-      `;
-      msg.reply(replyTemplate);
+      const imageResponse = await axios.get(urlImage, {
+        responseType: "arraybuffer",
+      });
+
+      const imageName = urlImage.split("/").pop(); // Mendapatkan nama file dari URL
+
+      fs.writeFileSync(`./image/ai/${imageName}`, imageResponse.data); // Menyimpan gambar dengan nama file yang didapat
+
+      const media = MessageMedia.fromFilePath(`./image/ai/${imageName}`); // Membuat objek MessageMedia dari file gambar
+
+      await client.sendMessage(msg.from, media);
+
+      fs.unlinkSync(`./image/ai/${imageName}`); // Menghapus gambar setelah dikirim
     } catch (error) {
       console.error("Error:", error);
-      msg.reply("Maaf, terjadi kesalahan dalam menghasilkan gambar.");
+      msg.reply(
+        "Maaf, terjadi kesalahan dalam mengambil gambar atau mengirimnya."
+      );
     }
   }
 });
