@@ -18,22 +18,8 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  if (msg.body.startsWith(".menu")) {
-    const menu = `
-╭───「 *LAYANAN* 」
-│
-│ .bantu = AI CHAT
-│ .image = text to image
-│
-╰────────────────────
-    `;
-    msg.reply(menu);
-  }
-});
-
-client.on("message", async (msg) => {
-  if (msg.body.startsWith(".bantu")) {
-    const textBantu = msg.body.substring(100);
+  if (msg.body.startsWith(".ask")) {
+    const textBantu = msg.body.substring(5);
     msg.reply("⏳ Prosses AI");
     const API_KEY = process.env.GEMINI_API;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
@@ -73,15 +59,15 @@ client.on("message", async (msg) => {
         responseType: "arraybuffer",
       });
 
-      const imageName = urlImage.split("/").pop(); // Mendapatkan nama file dari URL
+      const imageName = urlImage.split("/").pop();
 
-      fs.writeFileSync(`./image/ai/${imageName}`, imageResponse.data); // Menyimpan gambar dengan nama file yang didapat
+      fs.writeFileSync(`./image/ai/${imageName}`, imageResponse.data);
 
-      const media = MessageMedia.fromFilePath(`./image/ai/${imageName}`); // Membuat objek MessageMedia dari file gambar
+      const media = MessageMedia.fromFilePath(`./image/ai/${imageName}`);
 
       await client.sendMessage(msg.from, media);
 
-      fs.unlinkSync(`./image/ai/${imageName}`); // Menghapus gambar setelah dikirim
+      fs.unlinkSync(`./image/ai/${imageName}`);
     } catch (error) {
       console.error("Error:", error);
       msg.reply(

@@ -1,7 +1,0 @@
-
-╭───「 *LAYANAN* 」
-│
-│ .bantu = AI CHAT
-│ .image = text to image
-│
-╰────────────────────
