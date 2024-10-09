@@ -1,0 +1,13 @@
+{
+	"candidates": [
+		{
+			"content": {
+				"parts": [
+					{
+						"text": "Hallo! 👋  Was kann ich für dich tun? 😊 \n"
+					}
+				],
+				"role": "model"
+      }
+	],
+}
