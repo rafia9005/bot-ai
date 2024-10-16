@@ -35,7 +35,7 @@ client.on("message", async (msg) => {
 
 client.on("message", async (msg) => {
   if (msg.body.startsWith(".image")) {
-    const textImage = msg.body.substring(100);
+    const textImage = msg.body.substring(7);
     msg.reply("⏳ Proses AI");
     const input = {
       prompt: textImage,
