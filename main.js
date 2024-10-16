@@ -33,4 +33,43 @@ client.on("message", async (msg) => {
   }
 });
 
+client.on("message", async (msg) => {
+  if (msg.body.startsWith(".image")) {
+    const textImage = msg.body.substring(100);
+    msg.reply("⏳ Proses AI");
+    const input = {
+      prompt: textImage,
+      negprompt: "",
+      samples: 1,
+      steps: 50,
+      aspect_ratio: "square",
+      guidance_scale: 7.5,
+      seed: 2414,
+    };
+
+    try {
+      const response = await clientImage.generate(model, input);
+      const urlImage = response.output[0];
+
+      const imageResponse = await axios.get(urlImage, {
+        responseType: "arraybuffer",
+      });
+
+      const imageName = urlImage.split("/").pop();
+
+      fs.writeFileSync(`./image/ai/${imageName}`, imageResponse.data);
+
+      const media = MessageMedia.fromFilePath(`./image/ai/${imageName}`);
+
+      await client.sendMessage(msg.from, media);
+
+      fs.unlinkSync(`./image/ai/${imageName}`);
+    } catch (error) {
+      console.error("Error:", error);
+      msg.reply(
+        "Maaf, terjadi kesalahan dalam mengambil gambar atau mengirimnya."
+      );
+    }
+  }
+
 client.initialize();
