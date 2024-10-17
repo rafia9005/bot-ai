@@ -1,7 +1,12 @@
-const { Client } = require("whatsapp-web.js");
+const fs = require("fs");
+const { Client, MessageMedia } = require("whatsapp-web.js");
 const qrcode = require("qrcode-terminal");
 const axios = require("axios");
 require("dotenv").config();
+const { default: MonsterApiClient } = require("monsterapi");
+const clientImage = new MonsterApiClient(process.env.MONSTER_API);
+const model = "txt2img";
+
 
 const client = new Client();
 
